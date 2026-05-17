@@ -16,7 +16,6 @@ public class GameStateTest {
 
 	@BeforeEach
 	void setUp() {
-		// given: a simple 10x10 level with no walls
 		CellType[][] cells = new CellType[10][10];
 		for (int x = 0; x < 10; x++) {
 			for (int y = 0; y < 10; y++) {
@@ -149,5 +148,19 @@ public class GameStateTest {
 		GameState newState = state.tick();
 		// then
 		assertEquals(new Position(5, 5), newState.snake().head());
+	}
+
+	@Test
+	void testSelfCollisionLosesGame() {
+		// given
+		List<Position> body = new ArrayList<>();
+		body.add(new Position(5, 5));
+		body.add(new Position(4, 5));
+		Snake longSnake = new Snake(body);
+		GameState state = new GameState(level, longSnake, pins, GameState.Status.RUNNING, Direction.LEFT);
+		// when
+		GameState newState = state.tick();
+		// then
+		assertEquals(GameState.Status.LOST_SELF_COLLISION, newState.status());
 	}
 }
